@@ -4,7 +4,13 @@ import pandas as pd
 class EstrattoConto():
 	"""Il modulo per l'elaborazione del CSV IngDirect in Italiano"""
 
-	def __init__(self, filename):
+	def __init__(self, filename, giroconti=False):
+		"""
+		Args:
+			filename: il path del file CSV con i movimenti del conto corrente
+		Kwargs:
+			giroconti: (default False) se True include anche i giroconti nei calcoli.			
+		"""
 		self.movimenti = pd.read_csv(filename, parse_dates=True) 
 		# Converte le date in datetime
 		self.movimenti['Data valuta'] = pd.to_datetime(self.movimenti['Data valuta'],format='%d/%m/%Y')
@@ -20,7 +26,11 @@ class EstrattoConto():
 		self.movimenti['Entrate'] = self.movimenti[self.movimenti['Importo'] > 0]['Importo']
 		self.movimenti['Uscite'] = self.movimenti[self.movimenti['Importo'] < 0]['Importo']
 		self.movimenti['Uscite'] = -1 * self.movimenti['Uscite']
-		self.movimenti.fillna(0, inplace=True)		
+		self.movimenti.fillna(0, inplace=True)
+
+		if not giroconti:
+			self.movimenti = self.movimenti[self.movimenti["Causale"] != 'GIRO DA MIEI CONTI']
+			self.movimenti = self.movimenti[self.movimenti["Causale"] != 'GIRO VERSO MIEI CONTI']			
 
 	def entrate(self, group_causale=False):
 		
