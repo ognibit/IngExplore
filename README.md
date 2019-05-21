@@ -20,6 +20,8 @@ Per poter esegurie il programma serve avere installato sul PC l'interprete Pytho
 
 ## Esecuzione
 L'esecuzione del programma avviene da linea di comando.
+Usando l'opzione `--giroconti` (o `-g`) i movimenti di tipo "giroconto" verso i propri conti deposito verranno inclusi in tutte le operazioni e estrazioni. Di default sono esclusi.
+
 Il programma prende in input il file CSV dei movimenti e crea una cartella con dentro le varie elaborazioni:
 - **entrate.csv**: tutte le entrate
 - **entrate_causale.csv**: le entrate raggruppate per causale
@@ -30,3 +32,14 @@ Il programma prende in input il file CSV dei movimenti e crea una cartella con d
 - **disposizioni.csv**: il dettaglio delle disposizioni, con estrazione della nota.
 
 ```python ingcsv.py --in /tmp/ing_2018.csv --out /tmp/2018```
+
+## Saldo Al
+Il programma prevede anche la funzione `--saldo_al` che scrive in output il saldo al giorno indicato (compreso) nel formato *DD/MM/YYYY* (ES: *25/04/2019*).
+
+Il calcolo avviene sommando tutti gli importi nel file di input fino alla data indicata compresa. L'importo è arrotondato a due cifre decimali.
+
+```
+python ingcsv.py --in /tmp/ing_2018.csv --saldo_al 25/04/2019
+
+1234.56
+```

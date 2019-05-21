@@ -2,7 +2,23 @@
 
 import os
 import argparse
+from datetime import datetime
 from EstrattoConto import EstrattoConto
+
+def to_csv_files(estratto, out_dir):
+	if not os.path.exists(out_dir):
+	    os.makedirs(out_dir)
+
+	estratto.entrate().to_csv(os.path.join(out_dir, "entrate.csv"))
+	estratto.entrate(group_causale=True).to_csv(os.path.join(out_dir, "entrate_causale.csv"))
+	estratto.uscite().to_csv(os.path.join(out_dir, "uscite.csv"))
+	estratto.uscite(group_causale=True).to_csv(os.path.join(out_dir, "uscite_causale.csv"))
+	
+	estratto.mensili().to_csv(os.path.join(out_dir, "mensili.csv"))
+
+	estratto.bonifici().to_csv(os.path.join(out_dir, "bonifici.csv"))
+
+	estratto.disposizioni().to_csv(os.path.join(out_dir, "disposizioni.csv"))
 
 def main():
 	ap = argparse.ArgumentParser()
@@ -16,24 +32,16 @@ def main():
 	file_in = args["in"]
 	out_dir = args["out"] or "output"
 	include_giroconti = args["giroconti"]	
+	saldo_al = args["saldo_al"]
 	
-	if not os.path.exists(out_dir):
-	    os.makedirs(out_dir)
-
-	# TODO saldo_al
-
 	estratto = EstrattoConto(file_in, giroconti=include_giroconti)
 
-	estratto.entrate().to_csv(os.path.join(out_dir, "entrate.csv"))
-	estratto.entrate(group_causale=True).to_csv(os.path.join(out_dir, "entrate_causale.csv"))
-	estratto.uscite().to_csv(os.path.join(out_dir, "uscite.csv"))
-	estratto.uscite(group_causale=True).to_csv(os.path.join(out_dir, "uscite_causale.csv"))
-	
-	estratto.mensili().to_csv(os.path.join(out_dir, "mensili.csv"))
-
-	estratto.bonifici().to_csv(os.path.join(out_dir, "bonifici.csv"))
-
-	estratto.disposizioni().to_csv(os.path.join(out_dir, "disposizioni.csv"))
+	if saldo_al is not None:
+		date_saldo = datetime.strptime(saldo_al, "%d/%m/%Y")		
+		saldo = estratto.saldo_al(date_saldo)
+		print(saldo)
+	else:		
+		to_csv_files(estratto, out_dir)
 
 if __name__ == '__main__':
 	main()

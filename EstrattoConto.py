@@ -1,26 +1,40 @@
 import numpy as np
 import pandas as pd
 
+def csv_loader(filename):
+	"""
+	Load from CSV file a Pandas DataFrame with the columns:
+		- 'Data contabile' [datetime]
+		- 'Data valuta' [datetime]
+		- 'Causale' [string]
+		- 'Descrizione operazione', [string]
+		- 'Importo', [float]
+	"""
+	movimenti = pd.read_csv(filename, parse_dates=True) 
+	# Converte le date in datetime
+	movimenti['Data valuta'] = pd.to_datetime(movimenti['Data valuta'],format='%d/%m/%Y')
+	movimenti['Data contabile'] = pd.to_datetime(movimenti['Data contabile'],format='%d/%m/%Y')
+
+	# Converte l'importo in numero
+	importo_series = movimenti['Importo'].str.replace('.','')
+	importo_series = importo_series.str.extract('([-]*\d+,\d+)')[0]
+	importo_series = importo_series.str.replace(',','.')
+	movimenti['Importo'] = pd.to_numeric(importo_series)    
+	
+	return movimenti
+
 class EstrattoConto():
 	"""Il modulo per l'elaborazione del CSV IngDirect in Italiano"""
 
-	def __init__(self, filename, giroconti=False):
+	def __init__(self, filename, giroconti=False, loader=csv_loader):
 		"""
 		Args:
 			filename: il path del file CSV con i movimenti del conto corrente
 		Kwargs:
 			giroconti: (default False) se True include anche i giroconti nei calcoli.			
+			loader: la funzione per caricare il DataFrame
 		"""
-		self.movimenti = pd.read_csv(filename, parse_dates=True) 
-		# Converte le date in datetime
-		self.movimenti['Data valuta'] = pd.to_datetime(self.movimenti['Data valuta'],format='%d/%m/%Y')
-		self.movimenti['Data contabile'] = pd.to_datetime(self.movimenti['Data contabile'],format='%d/%m/%Y')
-
-		# Converte l'importo in numero
-		importo_series = self.movimenti['Importo'].str.replace('.','')
-		importo_series = importo_series.str.extract('([-]*\d+,\d+)')[0]
-		importo_series = importo_series.str.replace(',','.')
-		self.movimenti['Importo'] = pd.to_numeric(importo_series)
+		self.movimenti = loader(filename)
 
 		# New Columns
 		self.movimenti['Entrate'] = self.movimenti[self.movimenti['Importo'] > 0]['Importo']
@@ -55,7 +69,7 @@ class EstrattoConto():
 		causali_df = self.movimenti['Causale'].str.get_dummies()
 
 		for causale in causali:
-		    causali_df[causale] = self.movimenti[ self.movimenti['Causale'] == causale ]['Importo'].abs()
+			causali_df[causale] = self.movimenti[ self.movimenti['Causale'] == causale ]['Importo'].abs()
 
 		causali_df.fillna(0, inplace=True)
 
@@ -84,3 +98,13 @@ class EstrattoConto():
 		disposizioni['disposizione_nota'] = disposizione_nota	
 
 		return disposizioni	
+
+	def saldo_al(self, al):
+		"""
+		Somma degli importi dall'inizio dei movimenti fino al giorno indicato compreso
+
+		Args:
+			al: datetime 
+		"""
+		return self.movimenti[self.movimenti["Data contabile"] <= al ]["Importo"].sum().round(2)		
+		
