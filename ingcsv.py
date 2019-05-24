@@ -3,7 +3,7 @@
 import os
 import argparse
 from datetime import datetime
-from EstrattoConto import EstrattoConto
+from transaction import EstrattoConto, read_csv
 
 def to_csv_files(estratto, out_dir):
 	if not os.path.exists(out_dir):
@@ -34,7 +34,8 @@ def main():
 	include_giroconti = args["giroconti"]	
 	saldo_al = args["saldo_al"]
 	
-	estratto = EstrattoConto(file_in, giroconti=include_giroconti)
+	df = read_csv(file_in)
+	estratto = EstrattoConto(df, giroconti=include_giroconti)
 
 	if saldo_al is not None:
 		date_saldo = datetime.strptime(saldo_al, "%d/%m/%Y")		
