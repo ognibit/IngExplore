@@ -1,4 +1,8 @@
-"""IngCsv"""
+"""
+IngCsv
+CLI interface for the EstrattoConto.
+Use --help to see the usage.
+"""
 
 import os
 import argparse

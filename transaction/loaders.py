@@ -1,3 +1,7 @@
+"""
+DataFrame loaders from different sources for the EstrattoConto init.
+"""
+
 import pandas as pd
 
 def read_csv(filename, *args, **kwargs):
@@ -8,6 +12,18 @@ def read_csv(filename, *args, **kwargs):
 		- 'Causale' [string]
 		- 'Descrizione operazione', [string]
 		- 'Importo', [float]
+
+	Parameters
+	----------
+	filename: str
+		The path of the csv file.
+
+	*args, **kwargs
+		passed to pd.read_csv
+
+	Returns
+	-------
+	DataFrame		
 	"""
 	movimenti = pd.read_csv(filename, parse_dates=True, **kwargs) 
 	# Converte le date in datetime

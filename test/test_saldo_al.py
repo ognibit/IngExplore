@@ -1,16 +1,10 @@
+"""Unit tests for EstrattoConto.saldo_al()"""
+
 import unittest
 from datetime import datetime
 import pandas as pd
 from transaction import EstrattoConto
-
-def mock_loader(data):
-	columns = ['Data contabile', 'Causale', 'Descrizione operazione', 'Importo']
-	
-	movimenti = pd.DataFrame(data, columns=columns)
-	movimenti['Data contabile'] = pd.to_datetime(movimenti['Data contabile'],format='%d/%m/%Y')
-	movimenti['Data valuta'] = movimenti['Data contabile']
-	
-	return movimenti
+from test.utils import mock_loader
 
 class TestSaldoAl(unittest.TestCase):
 
