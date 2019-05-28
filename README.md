@@ -1,6 +1,9 @@
 # IngCsv
 Un programma per elaborare i movimenti dei conti ING Direct nel formato CSV, versione italiana.
 
+### Status
+[![Build Status](https://travis-ci.org/ognibit/IngCsv.svg?branch=master)](https://travis-ci.org/ognibit/IngCsv)
+
 ## Scaricare i Dati
 Dal sito ing.it, nella pagina Movimenti del Conto Corrente, si può fare la ricerca dei movimenti.
 In basso a destra c'è il link "Scarica Foglio di Calcolo" che permette di scaricare un excel denominato "MovimentiContoCorrenteArancio.xls". 
