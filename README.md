@@ -33,6 +33,7 @@ Il programma prende in input il file CSV dei movimenti e crea una cartella con d
 - **mensili.csv**: causali in riga, mesi in colonna e totali. Una vista completa per un bilancio.
 - **bonifici.csv**: il dettaglio dei bonifici, con estrazione dell'ordinante e della nota.
 - **disposizioni.csv**: il dettaglio delle disposizioni, con estrazione della nota.
+- **andamento_mensile.png**: il grafico con entrate, uscite e saldo ad ogni mese. Usando l'opzione `--saldo_iniziale 100.50` si può visualizzare l'andamento del saldo assoluto del conto.
 
 ```python ingcsv.py --in /tmp/ing_2018.csv --out /tmp/2018```
 

@@ -158,3 +158,42 @@ class EstrattoConto():
 		"""				
 		return self.movimenti[self.movimenti["Data contabile"] <= al ]["Importo"].sum().round(2)		
 		
+	def andamento_mensile(self, index_date_column='Data contabile', with_saldo=True, saldo_iniziale=0.0):
+		"""
+		Aggrega Entrate, Uscite ed eventualmente Saldo in mesi
+
+		Parameters	
+		----------
+			index_date_column: str, default 'Data contabile'
+				La colonna data su cui aggregare. 'Data contabile' o 'Data valuta'
+
+			with_saldo: bool, default True
+				Aggiunge la colonna Saldo ai risultati
+
+			saldo_iniziale: float, default 0.0
+				Per avere il saldo assoluto passare il saldo al giorno d'inizio dei movimenti
+		Returns
+		-------
+			DataFrame, matplotlib.axes.Axes
+		"""
+		columns = ['Entrate','Uscite']
+
+		movimenti_ts = self.movimenti.set_index(index_date_column)
+		mensili = movimenti_ts.resample('M').sum()
+
+		if with_saldo:
+			mensili["Saldo"] = mensili["Importo"].cumsum() + saldo_iniziale
+			columns.append('Saldo')
+
+		mensili = mensili[columns]
+		mensili = mensili.round(2)
+
+		ax = mensili[columns].plot(kind='barh', figsize=(14,6), color=['green','red','steelblue'])
+
+		ax.set(title='Bilancio Mensile', xlabel='Euro')
+
+		# Y format
+		yticks = [pd.to_datetime(item.get_text()).strftime('%Y-%b') for item in ax.get_yticklabels()]
+		ax.set_yticklabels(yticks);
+
+		return mensili, ax
