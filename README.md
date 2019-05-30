@@ -2,7 +2,7 @@
 Un programma per elaborare i movimenti dei conti ING Direct nel formato CSV, versione italiana.
 
 ### Status
-Version: 0.1.0
+Version: 0.1.1
 
 [![Build Status](https://travis-ci.org/ognibit/IngCsv.svg?branch=master)](https://travis-ci.org/ognibit/IngCsv)
 
