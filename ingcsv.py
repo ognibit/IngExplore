@@ -7,7 +7,7 @@ Use --help to see the usage.
 import os
 import argparse
 from datetime import datetime
-from transaction import EstrattoConto, read_csv, __version__
+from transaction import EstrattoConto, read_csv, read_xlsx, __version__
 import matplotlib.pyplot as plt
 
 def to_csv_files(estratto, out_dir):
@@ -35,10 +35,10 @@ def to_images(estratto, out_dir, saldo_iniziale):
 
 def main():
 	ap = argparse.ArgumentParser()
-	ap.add_argument("--in", "-i", required=True, help="Il file CSV (estratto conto) es: MovimentiContoCorrenteArancio.csv")
+	ap.add_argument("--in", "-i", required=True, help="Il file CSV o XLSX (movimenti conto) es: MovimentiContoCorrenteArancio.csv")
 	ap.add_argument("--out", "-o", required=False, help="La cartella dove verranno creati i file di output")
 	ap.add_argument("--saldo_al", "-s", required=False, help="Calcolo del saldo al giorno. Formato dd/mm/yyyy (es: 05/03/2019)")
-	ap.add_argument("--saldo_iniziale", "-si", required=False, help="Imposta il saldo pre-esistente. Valido per i grafici.")
+	ap.add_argument("--saldo_iniziale", "-si", required=False, help="Imposta il saldo pre-esistente. Valido per i grafici e saldo_al.")
 	ap.add_argument("--giroconti", "-g", required=False, action='store_true', help="Vengono inclusi i giroconti tra i movimenti")
 	ap.add_argument("-v", "--version", action="version", version='%(prog)s ' + __version__)
 
@@ -52,13 +52,22 @@ def main():
 	saldo_al = args["saldo_al"]
 	saldo_iniziale = float( args["saldo_iniziale"] or "0" )
 	
-	df = read_csv(file_in)
+	_, extension = os.path.splitext(file_in)
+
+	if extension == '.csv':
+		df = read_csv(file_in)
+	elif extension == '.xlsx':
+		df = read_xlsx(file_in)
+	else:
+		raise ValueError("Only .csv or .xlsx extension allowed")
+
 	estratto = EstrattoConto(df, giroconti=include_giroconti)
 
 	if saldo_al is not None:
 		date_saldo = datetime.strptime(saldo_al, "%d/%m/%Y")		
 		saldo = estratto.saldo_al(date_saldo)
-		print(saldo)
+		saldo = saldo + saldo_iniziale
+		print(saldo.round(2))
 	else:		
 		to_csv_files(estratto, out_dir)
 		to_images(estratto, out_dir, saldo_iniziale)
