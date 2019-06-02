@@ -3,7 +3,7 @@
 import unittest
 from datetime import datetime
 import pandas as pd
-from transaction import EstrattoConto
+from ing_explore import EstrattoConto
 from test.utils import mock_loader
 
 def get_first_value(df, filter_col, filter_value, result_col):

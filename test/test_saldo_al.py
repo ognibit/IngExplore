@@ -3,7 +3,7 @@
 import unittest
 from datetime import datetime
 import pandas as pd
-from transaction import EstrattoConto
+from ing_explore import EstrattoConto
 from test.utils import mock_loader
 
 class TestSaldoAl(unittest.TestCase):

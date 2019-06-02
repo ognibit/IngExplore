@@ -7,7 +7,7 @@ Use --help to see the usage.
 import os
 import argparse
 from datetime import datetime
-from transaction import EstrattoConto, read_csv, read_xlsx, __version__
+from . import EstrattoConto, read_csv, read_xlsx, __version__
 import matplotlib.pyplot as plt
 
 def to_csv_files(estratto, out_dir):
@@ -40,7 +40,7 @@ def main():
 	ap.add_argument("--saldo_al", "-s", required=False, help="Calcolo del saldo al giorno. Formato dd/mm/yyyy (es: 05/03/2019)")
 	ap.add_argument("--saldo_iniziale", "-si", required=False, help="Imposta il saldo pre-esistente. Valido per i grafici e saldo_al.")
 	ap.add_argument("--giroconti", "-g", required=False, action='store_true', help="Vengono inclusi i giroconti tra i movimenti")
-	ap.add_argument("-v", "--version", action="version", version='%(prog)s ' + __version__)
+	ap.add_argument("-v", "--version", action="version", version=f"{__package__} v{__version__}")
 
 
 

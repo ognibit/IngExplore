@@ -1,5 +1,5 @@
-# IngCsv
-Un programma per elaborare i movimenti dei conti ING Direct nel formato CSV, versione italiana.
+# Ing Explore
+Un programma per elaborare i movimenti dei conti ING Direct nel formato CSVe XLSX, versione italiana.
 
 ### Status
 Version: 0.1.1
@@ -37,7 +37,7 @@ Il programma prende in input il file CSV dei movimenti e crea una cartella con d
 - **disposizioni.csv**: il dettaglio delle disposizioni, con estrazione della nota.
 - **andamento_mensile.png**: il grafico con entrate, uscite e saldo ad ogni mese. Usando l'opzione `--saldo_iniziale 100.50` si può visualizzare l'andamento del saldo assoluto del conto.
 
-```python ingcsv.py --in /tmp/ing_2018.csv --out /tmp/2018```
+```python -m ing_explore --in /tmp/ing_2018.csv --out /tmp/2018```
 
 ## Saldo Al
 Il programma prevede anche la funzione `--saldo_al` che scrive in output il saldo al giorno indicato (compreso) nel formato *DD/MM/YYYY* (ES: *25/04/2019*).
@@ -45,7 +45,7 @@ Il programma prevede anche la funzione `--saldo_al` che scrive in output il sald
 Il calcolo avviene sommando tutti gli importi nel file di input fino alla data indicata compresa. L'importo è arrotondato a due cifre decimali.
 
 ```
-python ingcsv.py --in /tmp/ing_2018.csv --saldo_al 25/04/2019
+python -m ing_explore --in /tmp/ing_2018.csv --saldo_al 25/04/2019
 
 1234.56
 ```
