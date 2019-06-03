@@ -7,5 +7,6 @@ The input file should be XLSX or CSV.
 ## Status
 Version: 0.1.1
 
-[![Build Status](https://travis-ci.org/ognibit/IngExplore.svg?branch=master)](https://travis-ci.org/ognibit/IngExplore)
+Build: [![Build Status](https://travis-ci.org/ognibit/IngExplore.svg?branch=master)](https://travis-ci.org/ognibit/IngExplore)
 
+Docs: [![Documentation Status](https://readthedocs.org/projects/ingexplore/badge/?version=latest)](https://ingexplore.readthedocs.io/en/latest/?badge=latest)
