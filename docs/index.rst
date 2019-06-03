@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Ing Explore's documentation!
-==================================
+=======================================
 
 .. toctree::
    :maxdepth: 2

@@ -2,7 +2,7 @@ data/
 docs/_static
 docs/_templates
 docs/_build
-docs/api
+#docs/api
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
