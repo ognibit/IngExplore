@@ -1,56 +1,53 @@
-"""
-IngCsv
-CLI interface for the EstrattoConto.
+"""ing_explore
+CLI interface for the AccountStatements.
 Use --help to see the usage.
 """
 
 import os
 import argparse
 from datetime import datetime
-from . import EstrattoConto, read_csv, read_xlsx, __version__
+from . import AccountStatements, read_csv, read_xlsx, __version__
 import matplotlib.pyplot as plt
 
-def to_csv_files(estratto, out_dir):
+def _to_csv_files(statements, out_dir):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 
-	estratto.entrate().to_csv(os.path.join(out_dir, "entrate.csv"))
-	estratto.entrate(group_causale=True).to_csv(os.path.join(out_dir, "entrate_causale.csv"))
-	estratto.uscite().to_csv(os.path.join(out_dir, "uscite.csv"))
-	estratto.uscite(group_causale=True).to_csv(os.path.join(out_dir, "uscite_causale.csv"))
+	statements.incomes().to_csv(os.path.join(out_dir, "incomes.csv"))
+	statements.incomes(group_types=True).to_csv(os.path.join(out_dir, "incomes_groups.csv"))
+	statements.expenses().to_csv(os.path.join(out_dir, "expenses.csv"))
+	statements.expenses(group_types=True).to_csv(os.path.join(out_dir, "expenses_groups.csv"))
 	
-	estratto.mensili().to_csv(os.path.join(out_dir, "mensili.csv"))
+	statements.month_amounts().to_csv(os.path.join(out_dir, "months.csv"))
 
-	estratto.bonifici().to_csv(os.path.join(out_dir, "bonifici.csv"))
+	statements.transfers().to_csv(os.path.join(out_dir, "transfers.csv"))
 
-	estratto.disposizioni().to_csv(os.path.join(out_dir, "disposizioni.csv"))
+	statements.operations().to_csv(os.path.join(out_dir, "operations.csv"))
 
-def to_images(estratto, out_dir, saldo_iniziale):
+def _to_images(statements, out_dir, start_balance):
 	if not os.path.exists(out_dir):
-		os.makedirs(out_dir)	
+		os.makedirs(out_dir)
 
-	df, ax = estratto.andamento_mensile(saldo_iniziale=saldo_iniziale)
-	ax.figure.savefig(os.path.join(out_dir, "andamento_mensile.png"))
+	df, ax = statements.month_chart(start_balance=start_balance)
+	ax.figure.savefig(os.path.join(out_dir, "months.png"))
 	
 
 def main():
 	ap = argparse.ArgumentParser()
-	ap.add_argument("--in", "-i", required=True, help="Il file CSV o XLSX (movimenti conto) es: MovimentiContoCorrenteArancio.csv")
-	ap.add_argument("--out", "-o", required=False, help="La cartella dove verranno creati i file di output")
-	ap.add_argument("--saldo_al", "-s", required=False, help="Calcolo del saldo al giorno. Formato dd/mm/yyyy (es: 05/03/2019)")
-	ap.add_argument("--saldo_iniziale", "-si", required=False, help="Imposta il saldo pre-esistente. Valido per i grafici e saldo_al.")
-	ap.add_argument("--giroconti", "-g", required=False, action='store_true', help="Vengono inclusi i giroconti tra i movimenti")
+	ap.add_argument("--in", "-i", required=True, help="The input file CSV o XLSX")
+	ap.add_argument("--out", "-o", required=False, help="The output directory")
+	ap.add_argument("--balance_at", "-ba", required=False, help="Calculate the balance at the day. Format dd/mm/yyyy (es: 05/03/2019)")
+	ap.add_argument("--start_balance", "-sb", required=False, help="Set the initial balance.")
+	ap.add_argument("--giro", "-g", required=False, action='store_true', help="Include the internal transfers")
 	ap.add_argument("-v", "--version", action="version", version=f"{__package__} v{__version__}")
-
-
 
 	args = vars(ap.parse_args())
 
 	file_in = args["in"]
 	out_dir = args["out"] or "output"
-	include_giroconti = args["giroconti"]	
-	saldo_al = args["saldo_al"]
-	saldo_iniziale = float( args["saldo_iniziale"] or "0" )
+	include_giro = args["giro"]	
+	balance_at = args["balance_at"]
+	start_balance = float( args["start_balance"] or "0" )
 	
 	_, extension = os.path.splitext(file_in)
 
@@ -61,16 +58,16 @@ def main():
 	else:
 		raise ValueError("Only .csv or .xlsx extension allowed")
 
-	estratto = EstrattoConto(df, giroconti=include_giroconti)
+	statements = AccountStatements(df, giro=include_giro)
 
-	if saldo_al is not None:
-		date_saldo = datetime.strptime(saldo_al, "%d/%m/%Y")		
-		saldo = estratto.saldo_al(date_saldo)
-		saldo = saldo + saldo_iniziale
-		print(saldo.round(2))
+	if balance_at is not None:
+		date_balance = datetime.strptime(balance_at, "%d/%m/%Y")		
+		balance = statements.balance_at(date_balance)
+		balance = balance + start_balance
+		print(balance.round(2))
 	else:		
-		to_csv_files(estratto, out_dir)
-		to_images(estratto, out_dir, saldo_iniziale)
+		_to_csv_files(statements, out_dir)
+		_to_images(statements, out_dir, start_balance)
 
 if __name__ == '__main__':
 	main()

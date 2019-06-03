@@ -4,7 +4,7 @@ import pandas as pd
 
 def mock_loader(data):
 	"""
-	Load the data into a DataFrame for EstrattoConto
+	Load the data into a DataFrame for AccountStatements
 
 	Parameters	
 	----------
